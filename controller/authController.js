@@ -3,7 +3,7 @@ const {
 	CustomErrorAPI,
 	NotFound,
 	BadRequest,
-	Unauthorized,
+	Unauthonticated,
 } = require("../errors");
 const userSchema = require("../model/user");
 const { attachCookiesToResponse } = require("../utils");
@@ -28,10 +28,9 @@ const login = async (req, res) => {
 	}
 	const user = await userSchema.findOne({ email });
 	if (!user) {
-		throw new Unauthorized(`Invalid Credentails`);
+		throw new Unauthonticated(`Invalid Credentails`);
 	}
 	const isPasswordValid = await user.comparePassword(password);
-	console.log("passwordValidation", isPasswordValid);
 	if (!isPasswordValid) {
 		throw new CustomErrorAPI("Password is not valid");
 	}

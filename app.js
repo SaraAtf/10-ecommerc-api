@@ -17,8 +17,6 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
 app.get("/api/v1/products", (req, res) => {
-	console.log("cookies", req.cookies);
-	console.log("signedCookies", req.signedCookies);
 	return res.status(200).json({ msg: "Products" });
 });
 app.use("/api/v1/auth", authRouter);

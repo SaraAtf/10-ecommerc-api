@@ -1,5 +1,5 @@
 const { isTokenValid } = require("../utils");
-const { Unauthonticated } = require("../errors");
+const { Unauthonticated, Unauthorized } = require("../errors");
 
 const authonticateUser = async (req, res, next) => {
 	const token = req.signedCookies.token;
@@ -16,4 +16,15 @@ const authonticateUser = async (req, res, next) => {
 	}
 };
 
-module.exports = authonticateUser;
+const authorizeUser = (...roles) => {
+	return (req, res, next) => {
+		if (!roles.includes(req.user.role)) {
+			throw new Unauthorized("Anauthorized to access this route");
+		}
+		next();
+	};
+};
+module.exports = {
+	authonticateUser,
+	authorizeUser,
+};

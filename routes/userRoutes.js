@@ -1,4 +1,7 @@
-const authonticateUser = require("../middleware/authentication");
+const {
+	authonticateUser,
+	authorizeUser,
+} = require("../middleware/authentication");
 const {
 	getAllUser,
 	getSingleUser,
@@ -10,10 +13,12 @@ const {
 const express = require("express");
 const router = express.Router();
 
-router.route("/").get(authonticateUser, getAllUser);
-router.route("/showMe").get(showCurrentUser);
-router.route("/updateUser").patch(updateUser);
-router.route("/updateUserPassword").patch(updateUserPassword);
+router
+	.route("/")
+	.get(authonticateUser, authorizeUser("admin", "owner"), getAllUser);
+router.route("/showMe").get(authonticateUser, showCurrentUser);
+router.route("/updateUser").patch(authonticateUser, updateUser);
+router.route("/updateUserPassword").patch(authonticateUser, updateUserPassword);
 router.route("/:id").get(authonticateUser, getSingleUser);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Unauthorized, BadRequest } = require("../errors");
+const { Unauthonticated, BadRequest } = require("../errors");
 const jwt = require("jsonwebtoken");
 
 const authMW = (req, res, next) => {
@@ -14,7 +14,7 @@ const authMW = (req, res, next) => {
 		req.user = { userId: decoded.userId, name: decoded.name };
 		next();
 	} catch (error) {
-		throw new Unauthorized("Invalid Creditials");
+		throw new Unauthonticated("Invalid Creditials");
 	}
 };
 
