@@ -5,6 +5,9 @@ const notFound = require("./middleware/notfound");
 const errorMW = require("./middleware/error-handler");
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
+const productRouter = require("./routes/productRoutes");
+const { authonticateUser } = require("./middleware/authentication");
+
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 
@@ -21,6 +24,7 @@ app.get("/api/v1/products", (req, res) => {
 });
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/products", authonticateUser, productRouter);
 //notFound & Error Middlewares
 app.use(notFound);
 app.use(errorMW);
