@@ -10,6 +10,8 @@ const { authonticateUser } = require("./middleware/authentication");
 
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
+require("express-fileupload");
 
 const app = express();
 
@@ -17,11 +19,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(express.static("./public"));
+app.use(fileUpload());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
-app.get("/api/v1/products", (req, res) => {
-	return res.status(200).json({ msg: "Products" });
-});
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", authonticateUser, productRouter);
