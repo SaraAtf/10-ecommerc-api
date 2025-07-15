@@ -4,7 +4,11 @@ const { NotFound, BadRequest } = require("../errors");
 
 const path = require("path");
 const getAllProducts = async (req, res) => {
-	const products = await productSchema.find({});
+	const products = await productSchema.find({}).populate({
+		path: "user",
+		select: "name",
+	});
+
 	return res.status(200).json({ products, count: products.length });
 };
 const getSingleProduct = async (req, res) => {

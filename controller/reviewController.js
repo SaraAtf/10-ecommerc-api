@@ -29,12 +29,30 @@ const createReview = async (req, res) => {
 	res.status(StatusCodes.OK).json({ review });
 };
 const getAllReviews = async (req, res) => {
-	const reviews = await reviewSchema.find({});
+	const reviews = await reviewSchema
+		.find({})
+		.populate({
+			path: "product",
+			select: "name company price",
+		})
+		.populate({
+			path: "user",
+			select: "name",
+		});
 	res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
 const getSingleReview = async (req, res) => {
 	const { id: reviewId } = req.params;
-	const review = await reviewSchema.findOne({ _id: reviewId });
+	const review = await reviewSchema
+		.findOne({ _id: reviewId })
+		.populate({
+			path: "product",
+			select: "name company price",
+		})
+		.populate({
+			path: "user",
+			select: "name",
+		});
 	if (!review) {
 		throw new NotFound(`No Review Founded with ${reviewId}`);
 	}
@@ -58,8 +76,13 @@ const updateReview = async (req, res) => {
 
 	checkPermissions(req.user, review.user);
 	// update
+	review.title = title;
+	review.comment = comment;
+	review.rating = rating;
 
-	res.status(StatusCodes.OK).send("update Review");
+	await review.save();
+
+	res.status(StatusCodes.OK).json({ review });
 };
 const deleteReview = async (req, res) => {
 	const { id: reviewId } = req.params;
