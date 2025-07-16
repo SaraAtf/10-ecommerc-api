@@ -4,16 +4,15 @@ const { NotFound, BadRequest } = require("../errors");
 
 const path = require("path");
 const getAllProducts = async (req, res) => {
-	const products = await productSchema.find({}).populate({
-		path: "user",
-		select: "name",
-	});
+	const products = await productSchema.find({});
 
 	return res.status(200).json({ products, count: products.length });
 };
 const getSingleProduct = async (req, res) => {
 	const { id: productId } = req.params;
-	const product = await productSchema.findOne({ _id: productId });
+	const product = await productSchema
+		.findOne({ _id: productId })
+		.populate("reviews");
 	if (!product) {
 		throw new NotFound(`No Product Founded with this id ${productId}`);
 	}
@@ -42,7 +41,7 @@ const updateProduct = async (req, res) => {
 };
 const deleteProduct = async (req, res) => {
 	const { id: productId } = req.params;
-	const deletedProduct = await productSchema.findByIdAndDelete({
+	const deletedProduct = await productSchema.findOne({
 		_id: productId,
 	});
 
@@ -50,6 +49,7 @@ const deleteProduct = async (req, res) => {
 		throw new NotFound(`No Product Founded with this id ${productId}`);
 	}
 
+	await deletedProduct.deleteOne();
 	return res
 		.status(200)
 		.json({ msg: "Product deleted successfully", deletedProduct });
